@@ -100,7 +100,7 @@ Message contents remain the expression of their original authors; this license c
 
 ## Citation
 
-If you use this dataset, please cite it using the metadata in `CITATION.cff` or the DOI shown on the Zenodo record.
+If you use this dataset, please cite it using the DOI shown on the Zenodo record: [https://doi.org/10.5281/zenodo.23042869](https://doi.org/10.5281/zenodo.23042869).
 
 ## Contact
 
