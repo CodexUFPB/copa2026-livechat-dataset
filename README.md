@@ -104,4 +104,4 @@ If you use this dataset, please cite it using the metadata in `CITATION.cff` or 
 
 ## Contact
 
-Paulo Henrique Souto Maior Serrano, Departamento de Mídias Digitais (DEMID), Universidade Federal da Paraíba (UFPB), João Pessoa, Brazil. ORCID [0000-0002-3713-5190](https://orcid.org/0000-0002-3713-5190). E-mail: paulo.serrano@academico.ufpb.br
+Paulo Henrique Souto Maior Serrano, Departamento de Mídias Digitais (DEMID), Universidade Federal da Paraíba (UFPB), João Pessoa, Brazil. ORCID [0000-0002-3713-5190](https://orcid.org/0000-0002-3713-5190).
