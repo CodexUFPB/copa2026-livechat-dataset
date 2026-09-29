@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this dataset, please cite it as below."
+type: dataset
+title: "CazéTV World Cup 2026 Live Chat Dataset: pseudonymized YouTube live chat messages from Brazil's matches"
+version: 1.0.0
+date-released: 2026-09-29
+license: CC-BY-NC-4.0
+authors:
+  - family-names: "Serrano"
+    given-names: "Paulo Henrique Souto Maior"
+    orcid: "https://orcid.org/0000-0002-3713-5190"
+    affiliation: "Universidade Federal da Paraíba (UFPB)"
+    email: "paulo.serrano@academico.ufpb.br"
+keywords:
+  - YouTube live chat
+  - FIFA World Cup 2026
+  - CazéTV
+  - sports fandom
+  - Brazilian Portuguese
+  - computer-mediated communication
+  - social media dataset

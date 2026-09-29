@@ -1,0 +1,16 @@
+{
+  "title": "CazéTV World Cup 2026 Live Chat Dataset: pseudonymized YouTube live chat messages from Brazil's matches",
+  "upload_type": "dataset",
+  "description": "<p>Pseudonymized YouTube live chat messages (50,779 messages, 46,488 pseudonymized accounts) posted during the CazéTV broadcasts of the five matches played by the Brazilian national team at the FIFA World Cup 2026 (Morocco, Haiti, Scotland, Japan, Norway). Each record has a UTC timestamp, a stable author pseudonym (consistent across matches), the message text and YouTube role badges. Handles, channel ids and original message ids were removed, automatic membership notices were dropped, mentions were pseudonymized and self-disclosed personal names were manually redacted. See README for the full procedure and residual re-identification risk.</p>",
+  "creators": [
+    {
+      "name": "Serrano, Paulo Henrique Souto Maior",
+      "affiliation": "Universidade Federal da Paraíba",
+      "orcid": "0000-0002-3713-5190"
+    }
+  ],
+  "license": "cc-by-nc-4.0",
+  "access_right": "open",
+  "language": "por",
+  "keywords": ["YouTube live chat", "FIFA World Cup 2026", "CazéTV", "sports fandom", "Brazilian Portuguese", "computer-mediated communication", "social media dataset"]
+}

@@ -1,0 +1,107 @@
+# CazéTV World Cup 2026 Live Chat Dataset
+
+Pseudonymized YouTube live chat messages posted during the CazéTV broadcasts of the five matches played by the Brazilian national team at the FIFA World Cup 2026 (13 June to 5 July 2026).
+
+The dataset contains **50,779 messages** written by **46,488 pseudonymized accounts**, with message text, UTC timestamps and the role badges YouTube attaches to each author (channel owner, moderator, verified, channel member). Author pseudonyms are consistent across matches, so the **1,403 accounts that commented in more than one match** can be followed over the tournament.
+
+It is intended for research in communication, digital media, sports fandom, computational linguistics and online interaction, such as studies of affect and toxicity in live sports talk, audience reaction to match events, platform vernacular (emotes, repetition, flooding) and cross-match participation.
+
+## Files
+
+```
+data/
+  jogo01-13-06-brasil-marrocos.csv
+  jogo02-19-06-brasil-haiti.csv
+  jogo03-24-06-brasil-escocia.csv
+  jogo04-29-06-brasil-japao.csv
+  jogo05-05-07-brasil-noruega.csv
+  all_games.csv                 # the five files concatenated
+scripts/
+  anonymize.py                  # pseudonymization pipeline applied to the raw capture
+```
+
+All files are UTF-8 encoded, comma separated, with a header row.
+
+## Matches and capture windows
+
+| game_id | Match | Date (UTC) | Capture start (UTC) | Capture end (UTC) | Minutes | Messages | Authors |
+|---|---|---|---|---|---|---|---|
+| J01 | Brazil vs Morocco | 2026-06-13 | 22:10:53 | 00:10:16 (+1 day) | 119 | 11,944 | 10,983 |
+| J02 | Brazil vs Haiti | 2026-06-20 | 00:19:49 | 02:31:31 | 132 | 10,538 | 9,918 |
+| J03 | Brazil vs Scotland | 2026-06-24 | 21:54:57 | 00:04:51 (+1 day) | 130 | 8,947 | 8,509 |
+| J04 | Brazil vs Japan | 2026-06-29 | 16:52:01 | 19:01:36 | 130 | 7,409 | 7,232 |
+| J05 | Brazil vs Norway | 2026-07-05 | 19:37:06 | 22:16:15 | 159 | 11,941 | 11,414 |
+| | **Total** | | | | | **50,779** | **46,488** unique |
+
+Dates in file names follow the Brazilian local date of the match (day-month). The capture was started manually by the author while each broadcast was live, so **the capture window does not necessarily coincide with kick-off or with the start of the broadcast**. Users who wish to align messages with match events (goals, half-time, VAR decisions) should use the absolute timestamps together with an external match timeline.
+
+## Data dictionary
+
+| Column | Type | Description |
+|---|---|---|
+| `message_id` | string | Identifier created for this dataset: game id plus a sequential number in chronological order (e.g. `J01_000001`). It is **not** the original YouTube message id. |
+| `game_id` | string | `J01` to `J05`, in chronological order. |
+| `game` | string | Short match label (e.g. `brasil-marrocos`). |
+| `timestamp` | string | Time the message was posted, ISO 8601 in UTC with microseconds, as reported by YouTube. |
+| `author_id` | string | Pseudonym of the author, of the form `u_` plus 12 hexadecimal characters. The same account receives the same pseudonym in every match. The three institutional accounts listed below keep their public handle. |
+| `message` | string | Message text as posted, after the redactions described below. YouTube emotes appear as shortcodes (e.g. `:face-blue-smiling:`, `:_cazétv:`). 277 rows have an empty message field. |
+| `is_owner` | boolean | Message posted by the channel owner (CazéTV). |
+| `is_moderator` | boolean | Author had a moderator badge. |
+| `is_verified` | boolean | Author had a verified badge. |
+| `is_member` | boolean | Author had a paid channel membership badge. |
+
+Badge counts in the published data: owner 2, moderator 274, verified 49, member 1,398 messages.
+
+## Pseudonymization and cleaning
+
+The raw capture contained public handles, YouTube channel ids and YouTube message ids, which point directly to personal profiles. Although the chat was public, it is personal data under the Brazilian General Data Protection Law (LGPD, Law 13,709/2018). The following steps were applied with `scripts/anonymize.py`:
+
+1. **Author pseudonyms.** Each YouTube channel id was replaced by a keyed hash (HMAC-SHA256, truncated to 48 bits, no collisions in this dataset). The secret key is kept by the author and is not published, so pseudonyms cannot be reversed or recomputed by third parties. Keying on the channel id (and not on the handle, which users can change) keeps pseudonyms stable across matches.
+2. **Institutional accounts.** Accounts belonging to organizations and not to natural persons keep their public handle: `@CazeTV` (channel owner), `@Itau` and `@mercadolivreoficial`. All other accounts, **including verified influencers and moderators**, are pseudonymized.
+3. **Removed columns.** `author` (handle) and `channel_id` were dropped; the original YouTube `message_id` was replaced by a dataset-specific sequential id.
+4. **Removed rows: automatic membership notices.** 1,405 system messages generated by YouTube and not written by users were removed: "@user just became a member!" (1,067), "@user received a gift membership by @user" (272), "@user gifted N CazéTV memberships" (64) and "@user celebrates N months of membership" (2). As a consequence, the number of distinct authors drops from 47,846 channels in the raw capture to 46,488 in the published data, since some accounts only appeared in these notices.
+5. **Mentions inside messages.** `@handle` mentions were replaced by the author pseudonym when the mentioned account is present in the dataset (22 cases, e.g. `@u_259bef594bc8`) and by `@usuario` otherwise (132 cases; the count of 142 replacements in the report includes repeated mentions). Mentions of the institutional accounts were kept.
+6. **Contact data.** Automatic patterns for e-mail addresses, URLs and Brazilian phone numbers were applied (no matches were found in user messages; long digit strings in the chat are score spam, not phone numbers).
+7. **Self-disclosed and third-party names.** Messages containing self-identification cues in Portuguese ("meu nome é", "me chamo", "aqui é o/a", "fala meu nome", "manda (um) salve", "me segue", "segue aí") were flagged (107 messages) and reviewed manually. In 30 of them, personal names of private individuals (28 messages) and handles written without `@` (2 messages) were replaced with `[NOME]` and `[USUARIO]`. Names of public figures (players, coaches, broadcasters), companies and places (cities, states, neighbourhoods) were kept, since they carry analytic value and do not identify the author on their own.
+
+Timestamps were kept unchanged because the capture did not start at a fixed point of the broadcast (see above), so relative times would not be comparable across matches.
+
+### Residual risk
+
+This is **pseudonymized, not anonymous, data**. Message texts are verbatim and the broadcasts' chat replays remain publicly available on YouTube, so a determined person could search a message in the replay and find its author. Name detection relied on textual cues and manual review, so personal names written without such cues may remain. Users of this dataset must not attempt to re-identify individuals, must not link it to other sources to that end, and must not quote messages in a way that singles out an individual. If you find personal information that should have been removed, please open an issue or contact the author and it will be redacted in a new version.
+
+## Ethics
+
+The data consist of messages voluntarily posted in the public live chat of an open YouTube broadcast. Under Brazilian research ethics regulation (Resolution CNS 510/2016, art. 1, sole paragraph), research using publicly accessible information does not require registration with the CEP/CONEP system, and no ethics committee review was sought. The pseudonymization procedure above was adopted to minimize risks to the people whose messages are included, following the LGPD principles of necessity and data minimization.
+
+## Collection
+
+Messages were captured in real time by the author from the public live chat of the CazéTV YouTube broadcasts, recording the fields exposed by YouTube for each chat item (message id, timestamp, author handle, channel id, text and badges).
+
+## Reproducing the pseudonymization
+
+```bash
+python scripts/anonymize.py --input RAW_DIR --output data --key PATH/TO/secret_key.txt \
+                            --review PATH/TO/revisao_manual.csv --report-dir PATH/TO/reports
+```
+
+Raw files, the secret key and the manual review sheet are not distributed. Requires Python 3.9+ and pandas.
+
+## Use of AI tools
+
+The pseudonymization script (`scripts/anonymize.py`), the pre-screening of messages for manual review and the drafting of this documentation were carried out with the assistance of Claude (Anthropic), a large language model, under the direction of the author. All decisions on what to pseudonymize, remove or keep, including every manual redaction, were made and verified by the author, who takes full responsibility for the dataset and its documentation.
+
+## License
+
+- **Data** (`data/`): [Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/). You may share and adapt the data for non-commercial purposes, with attribution.
+- **Code** (`scripts/`): MIT License.
+
+Message contents remain the expression of their original authors; this license covers the compilation, pseudonymization and documentation.
+
+## Citation
+
+If you use this dataset, please cite it using the metadata in `CITATION.cff` or the DOI shown on the Zenodo record.
+
+## Contact
+
+Paulo Henrique Souto Maior Serrano, Departamento de Mídias Digitais (DEMID), Universidade Federal da Paraíba (UFPB), João Pessoa, Brazil. ORCID [0000-0002-3713-5190](https://orcid.org/0000-0002-3713-5190). E-mail: paulo.serrano@academico.ufpb.br

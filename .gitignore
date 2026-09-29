@@ -1,0 +1,6 @@
+# never publish raw data or the pseudonymization key
+/raw/
+*chave*
+*key*.txt
+revisao_manual.csv
+__pycache__/
